@@ -120,6 +120,88 @@ describe('dev-doctor CLI (built)', () => {
       await cleanupDir(dir);
     }
   });
+  it('fix --dry-run shows what would change without modifying files', async () => {
+    const dir = await copyFixture('missing-docs-project');
+    try {
+      const { code, stdout } = await runCli(['fix', '--dry-run'], dir);
+      expect(code).toBe(0);
+      expect(stdout).toContain('Would modify:');
+      expect(stdout).toContain('.gitignore');
+      expect(stdout).toContain('README.md');
+      expect(stdout).toContain('No files were changed.');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('fix creates .gitignore and README.md', async () => {
+    const dir = await copyFixture('missing-docs-project');
+    try {
+      const { code } = await runCli(['fix'], dir);
+      expect(code).toBe(0);
+      const { access } = await import('node:fs/promises');
+      await expect(access(path.join(dir, '.gitignore'))).resolves.toBeUndefined();
+      await expect(access(path.join(dir, 'README.md'))).resolves.toBeUndefined();
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('report --format json emits parseable JSON without secrets', async () => {
+    const dir = await copyFixture('insecure-node-project');
+    try {
+      const { code, stdout } = await runCli(['report', '--format', 'json'], dir);
+      expect(code).toBe(1);
+      const json = JSON.parse(stdout) as {
+        version: string;
+        project: { name: string };
+        score: number;
+        issues: Array<{ id: string }>;
+      };
+      expect(json.version).toBe('1.0');
+      expect(json.project.name).toBe('insecure-node-project');
+      expect(typeof json.score).toBe('number');
+      expect(json.issues.length).toBeGreaterThan(0);
+      expect(stdout).not.toContain('super-secret-value-123');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('report --format markdown emits a markdown report', async () => {
+    const dir = await copyFixture('missing-docs-project');
+    try {
+      const { code, stdout } = await runCli(['report', '--format', 'markdown'], dir);
+      expect(code).toBe(1);
+      expect(stdout).toContain('# DevDoctor Report');
+      expect(stdout).toContain('Health Score');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('explain prints the check description', async () => {
+    const dir = await copyFixture('healthy-node-project');
+    try {
+      const { code, stdout } = await runCli(['explain', 'git.gitignore'], dir);
+      expect(code).toBe(0);
+      expect(stdout).toContain('git.gitignore');
+      expect(stdout).toContain('Checks that a .gitignore exists');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('explain fails for unknown checks', async () => {
+    const dir = await copyFixture('healthy-node-project');
+    try {
+      const { code, stderr } = await runCli(['explain', 'does.not.exist'], dir);
+      expect(code).toBe(2);
+      expect(stderr).toContain('Unknown check');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
 
   const maybe = gitAvailable() ? it : it.skip;
 

@@ -2,7 +2,7 @@ import { colors } from '../cli/ui/colors.js';
 import type { AuditReport } from '../types/report.js';
 import type { CheckCategory, CheckStatus, Severity } from '../types/check.js';
 
-const CATEGORY_LABELS: Record<CheckCategory, string> = {
+export const CATEGORY_LABELS: Record<CheckCategory, string> = {
   security: 'Security',
   code: 'Code Quality',
   dependencies: 'Dependencies',
@@ -12,7 +12,7 @@ const CATEGORY_LABELS: Record<CheckCategory, string> = {
   project: 'Project',
 };
 
-const CATEGORY_ORDER: readonly CheckCategory[] = [
+export const CATEGORY_ORDER: readonly CheckCategory[] = [
   'security',
   'code',
   'dependencies',

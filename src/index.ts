@@ -21,6 +21,17 @@ export { DevDoctorError, toErrorMessage } from './core/errors.js';
 export { parseGitignore } from './core/gitignore.js';
 export { computeScores } from './core/score.js';
 export { maskSecret, scanForSecrets } from './analyzers/secrets.js';
+export type { FixAction, FixOperation, FixResult, Fixer } from './types/fixer.js';
+export {
+  getFixerForCheck,
+  getFixers,
+  registerDefaultFixers,
+  registerFixer,
+  resetFixers,
+} from './fixers/registry.js';
+export { renderJsonReport, JSON_SCHEMA_VERSION } from './reporters/json.js';
+export { renderMarkdownReport } from './reporters/markdown.js';
+export { renderQuietReport, renderReport } from './reporters/terminal.js';
 export {
   getCheckById,
   getChecks,

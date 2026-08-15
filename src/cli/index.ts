@@ -1,13 +1,18 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
+import { registerDefaultFixers } from '../fixers/registry.js';
 import { registerDefaultChecks } from '../core/registry.js';
 import { renderError } from '../reporters/terminal.js';
 import { VERSION } from '../version.js';
 import type { CheckCategory } from '../types/check.js';
 import { runAuditCommand } from './commands/audit.js';
+import { runExplainCommand } from './commands/explain.js';
+import { runFixCommand } from './commands/fix.js';
+import { runReportCommand } from './commands/report.js';
 import { disableColor } from './ui/colors.js';
 
 registerDefaultChecks();
+registerDefaultFixers();
 
 const program = new Command();
 
@@ -39,6 +44,52 @@ program
       debug: Boolean(global.debug),
       spinnerEnabled: Boolean(global.spinner) && !global.quiet && process.stdout.isTTY === true,
     });
+  });
+
+program
+  .command('fix')
+  .description('Apply safe fixes for detected issues')
+  .option('--dry-run', 'Show what would be modified without changing files')
+  .option('--check <id>', 'Only fix the given check')
+  .action(async (commandOptions: { dryRun?: boolean; check?: string }) => {
+    const global = program.opts();
+    if (global.color === false) disableColor();
+    process.exitCode = await runFixCommand(process.cwd(), {
+      dryRun: Boolean(commandOptions.dryRun),
+      checkId: commandOptions.check,
+      quiet: Boolean(global.quiet),
+      debug: Boolean(global.debug),
+      spinnerEnabled: Boolean(global.spinner) && !global.quiet && process.stdout.isTTY === true,
+    });
+  });
+
+program
+  .command('report')
+  .description('Generate a report (JSON or Markdown)')
+  .option('--format <format>', 'Output format: json or markdown', 'markdown')
+  .action(async (commandOptions: { format?: string }) => {
+    const global = program.opts();
+    if (global.color === false) disableColor();
+    const format = commandOptions.format ?? 'markdown';
+    if (format !== 'json' && format !== 'markdown') {
+      process.stderr.write(`Unsupported format: ${format} (use json or markdown).\n`);
+      process.exitCode = 2;
+      return;
+    }
+    process.exitCode = await runReportCommand(process.cwd(), {
+      format,
+      debug: Boolean(global.debug),
+      spinnerEnabled: Boolean(global.spinner) && !global.quiet && process.stdout.isTTY === true,
+    });
+  });
+
+program
+  .command('explain <check-id>')
+  .description('Explain a check')
+  .action(async (checkId: string) => {
+    const global = program.opts();
+    if (global.color === false) disableColor();
+    process.exitCode = runExplainCommand(checkId);
   });
 
 program.action(async () => {

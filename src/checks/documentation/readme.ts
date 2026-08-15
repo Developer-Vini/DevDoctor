@@ -3,7 +3,14 @@ import path from 'node:path';
 import { makeResult } from '../helpers.js';
 import type { Check } from '../../types/check.js';
 
-const README_NAMES = ['README.md', 'README', 'readme.md', 'readme', 'README.txt', 'README.rst'];
+export const README_NAMES = [
+  'README.md',
+  'README',
+  'readme.md',
+  'readme',
+  'README.txt',
+  'README.rst',
+];
 
 const meta = { id: 'documentation.readme', name: 'README', category: 'documentation' as const };
 

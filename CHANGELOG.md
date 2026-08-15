@@ -5,6 +5,20 @@ All notable changes to DevDoctor are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and
 this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.3.0] - 2026-08-15
+
+### Added
+
+- Phase 3: safe fix system (`dev-doctor fix`) with `--dry-run` preview and
+  `--check <id>` filtering. Fixers create a `.gitignore` (or append missing
+  entries, with a backup), create a `.env.example` (keys only — real values
+  are never written) and create a basic `README.md` (never overwrites).
+- `dev-doctor report --format json|markdown`: stable JSON (schema `1.0`, no
+  raw secrets) and Markdown reports.
+- `dev-doctor explain <check-id>`: explains what a check does and whether a
+  safe auto-fix exists.
+- Version bumped to 0.3.0.
+
 ## [0.2.0] - 2026-08-15
 
 ### Added

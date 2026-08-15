@@ -97,17 +97,30 @@ Run:
 
 ### Commands
 
-| Command                               | Description                                 |
-| ------------------------------------- | ------------------------------------------- |
-| `dev-doctor`                          | Default summary audit                       |
-| `dev-doctor audit`                    | Detailed audit                              |
-| `dev-doctor audit --security`         | Only security checks                        |
-| `dev-doctor fix`                      | Apply safe fixes (with `--dry-run` preview) |
-| `dev-doctor report --format json`     | JSON report                                 |
-| `dev-doctor report --format markdown` | Markdown report                             |
-| `dev-doctor explain <check-id>`       | Explain a diagnosis                         |
-| `dev-doctor --version`                | Print version                               |
-| `dev-doctor --help`                   | Print help                                  |
+| Command                               | Description                                |
+| ------------------------------------- | ------------------------------------------ |
+| `dev-doctor`                          | Default summary audit                      |
+| `dev-doctor audit`                    | Detailed audit                             |
+| `dev-doctor audit --security`         | Only security checks (incl. network audit) |
+| `dev-doctor fix`                      | Apply safe fixes (`--dry-run`, `--check`)  |
+| `dev-doctor report --format json`     | JSON report (stable schema, no secrets)    |
+| `dev-doctor report --format markdown` | Markdown report                            |
+| `dev-doctor explain <check-id>`       | Explain a check                            |
+| `dev-doctor --version`                | Print version                              |
+| `dev-doctor --help`                   | Print help                                 |
+
+### Safe fixes
+
+`dev-doctor fix` only applies safe, non-destructive fixes: it creates a
+`.gitignore` (or adds missing entries, keeping a `.devdoctor.bak` backup),
+creates a `.env.example` from the keys of existing `.env` files (values are
+never written) and creates a basic `README.md` when none exists.
+
+```bash
+dev-doctor fix --dry-run              # preview what would change
+dev-doctor fix --check security.env   # fix a specific check
+dev-doctor fix                        # apply safe fixes
+```
 
 ### Flags
 
@@ -246,7 +259,7 @@ dev-doctor
 
 - [x] Phase 1 — CLI, core, context, check system, terminal reporter
 - [x] Phase 2 — dependency checks, secret detection, code checks, score
-- [ ] Phase 3 — safe fixes (`fix`), `--dry-run`, JSON and Markdown reports
+- [x] Phase 3 — safe fixes (`fix`), `--dry-run`, JSON and Markdown reports
 - [ ] Phase 4 — CI mode, configuration file support
 - [ ] Phase 5 — AST analysis
 - [ ] Optional AI layer for explanations and suggestions
