@@ -1,0 +1,17 @@
+{
+  "name": "healthy-node-project",
+  "version": "1.0.0",
+  "description": "A healthy example project used as a DevDoctor test fixture.",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "eslint .",
+    "start": "node dist/index.js"
+  },
+  "dependencies": {
+    "chalk": "^5.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  }
+}
