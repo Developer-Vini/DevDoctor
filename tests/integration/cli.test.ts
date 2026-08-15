@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import { execFile } from 'node:child_process';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { cleanupDir, copyFixture, gitAvailable, initGitRepo } from '../helpers.js';
+import { cleanupDir, copyFixture, gitAvailable, initGitRepo, makeTempDir } from '../helpers.js';
 
 const execFileAsync = promisify(execFile);
 const CLI = path.join(process.cwd(), 'dist', 'cli', 'index.js');
@@ -120,6 +121,78 @@ describe('dev-doctor CLI (built)', () => {
       await cleanupDir(dir);
     }
   });
+  it('--ci --min-score fails when the score is below the threshold', async () => {
+    const dir = await copyFixture('missing-docs-project');
+    try {
+      const { code, stdout } = await runCli(['--ci', '--min-score', '99'], dir);
+      expect(code).toBe(1);
+      expect(stdout).toContain('CI FAILED');
+      expect(stdout).toContain('Required: 99');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('--ci passes when the score meets --min-score', async () => {
+    const dir = await copyFixture('healthy-node-project');
+    try {
+      initGitRepo(dir);
+      const { code, stdout } = await runCli(['--ci', '--min-score', '50'], dir);
+      expect(code).toBe(0);
+      expect(stdout).not.toContain('CI FAILED');
+    } finally {
+      await cleanupDir(dir);
+    }
+  }, 60_000);
+
+  it('rejects an invalid --min-score', async () => {
+    const dir = await copyFixture('healthy-node-project');
+    try {
+      const { code, stderr } = await runCli(['--ci', '--min-score', 'abc'], dir);
+      expect(code).toBe(2);
+      expect(stderr).toContain('Invalid --min-score');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('respects exclude and rules from .devdoctorrc.json', async () => {
+    const dir = await makeTempDir();
+    try {
+      await mkdir(path.join(dir, 'generated'), { recursive: true });
+      await writeFile(path.join(dir, 'generated', 'out.js'), "console.log('gen');\n");
+      await mkdir(path.join(dir, 'src'), { recursive: true });
+      await writeFile(path.join(dir, 'src', 'main.js'), "console.log('main');\n");
+      await writeFile(path.join(dir, 'package.json'), '{"name":"cfg-demo"}\n');
+      await writeFile(
+        path.join(dir, '.devdoctorrc.json'),
+        JSON.stringify({ exclude: ['generated'], rules: { 'code.console-log': 'off' } }),
+      );
+
+      const { code, stdout } = await runCli(['report', '--format', 'json'], dir);
+      // Other issues remain (no README, no lockfile), but the configured
+      // exclusion and the disabled rule must take effect.
+      expect(code).toBe(1);
+      expect(stdout).not.toContain('generated');
+      expect(stdout).not.toContain('code.console-log');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
+  it('uses minScore from configuration in CI mode', async () => {
+    const dir = await copyFixture('missing-docs-project');
+    try {
+      await writeFile(path.join(dir, '.devdoctorrc.json'), '{"minScore": 99}\n');
+      const { code, stdout } = await runCli(['--ci'], dir);
+      expect(code).toBe(1);
+      expect(stdout).toContain('CI FAILED');
+      expect(stdout).toContain('Required: 99');
+    } finally {
+      await cleanupDir(dir);
+    }
+  });
+
   it('fix --dry-run shows what would change without modifying files', async () => {
     const dir = await copyFixture('missing-docs-project');
     try {

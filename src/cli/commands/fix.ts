@@ -1,3 +1,4 @@
+import { loadConfig } from '../../core/config.js';
 import { buildContext } from '../../core/context.js';
 import { runAudit } from '../../core/runner.js';
 import { getFixers } from '../../fixers/registry.js';
@@ -25,8 +26,9 @@ export async function runFixCommand(
   const spinner = createSpinner(options.spinnerEnabled ?? false);
   spinner.start('Analyzing issues...');
   try {
-    const context = await buildContext(projectPath);
-    const report = await runAudit(context);
+    const config = await loadConfig(projectPath);
+    const context = await buildContext(projectPath, config);
+    const report = await runAudit(context, { rules: config.rules });
     await spinner.stop();
 
     const fixers = getFixers().filter((fixer) => {

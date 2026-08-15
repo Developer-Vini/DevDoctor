@@ -5,6 +5,21 @@ All notable changes to DevDoctor are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and
 this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.4.0] - 2026-08-15
+
+### Added
+
+- Phase 4: CI mode (`dev-doctor --ci`) — no animations, readable output and
+  proper exit codes (0 = success, 1 = problems found, 2 = internal error).
+- `--min-score <n>`: fails CI with `CI FAILED` when the score is below the
+  threshold.
+- Configuration via `.devdoctorrc.json` or `devdoctor.config.ts` (ESM,
+  Node >= 23.6): `exclude`, `rules` (per-check levels, `off` disables) and
+  `minScore`. CLI flags override config values. Invalid configs warn and fall
+  back to defaults.
+- `--verbose` now prints execution info (checks run, duration, score).
+- Version bumped to 0.4.0.
+
 ## [0.3.0] - 2026-08-15
 
 ### Added

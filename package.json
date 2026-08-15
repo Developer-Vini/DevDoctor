@@ -1,6 +1,6 @@
 {
   "name": "devdoctor",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Run one command. Know the health of your project.",
   "type": "module",
   "license": "MIT",

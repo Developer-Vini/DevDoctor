@@ -23,6 +23,8 @@ program
   .option('--quiet', 'only print issues; no colors or spinners')
   .option('--no-color', 'disable colored output')
   .option('--no-spinner', 'disable the loading spinner')
+  .option('--ci', 'CI mode: no animations, readable output, exit codes')
+  .option('--min-score <n>', 'fail in CI mode when the score is below n')
   .option('--verbose', 'enable verbose logging')
   .option('--debug', 'enable debug output including stack traces');
 
@@ -36,13 +38,19 @@ program
     const categories: CheckCategory[] | undefined = commandOptions.security
       ? ['security']
       : undefined;
+    const minScore = parseMinScore(global.minScore);
+    if (minScore === 'invalid') return;
     process.exitCode = await runAuditCommand(process.cwd(), {
       detailed: true,
       quiet: Boolean(global.quiet),
       categories,
       network: Boolean(commandOptions.security),
+      ci: Boolean(global.ci),
+      minScore,
+      verbose: Boolean(global.verbose),
       debug: Boolean(global.debug),
-      spinnerEnabled: Boolean(global.spinner) && !global.quiet && process.stdout.isTTY === true,
+      spinnerEnabled:
+        Boolean(global.spinner) && !global.quiet && !global.ci && process.stdout.isTTY === true,
     });
   });
 
@@ -95,11 +103,17 @@ program
 program.action(async () => {
   const global = program.opts();
   if (global.color === false) disableColor();
+  const minScore = parseMinScore(global.minScore);
+  if (minScore === 'invalid') return;
   process.exitCode = await runAuditCommand(process.cwd(), {
     detailed: false,
     quiet: Boolean(global.quiet),
+    ci: Boolean(global.ci),
+    minScore,
+    verbose: Boolean(global.verbose),
     debug: Boolean(global.debug),
-    spinnerEnabled: Boolean(global.spinner) && !global.quiet && process.stdout.isTTY === true,
+    spinnerEnabled:
+      Boolean(global.spinner) && !global.quiet && !global.ci && process.stdout.isTTY === true,
   });
 });
 
@@ -107,3 +121,14 @@ program.parseAsync(process.argv).catch((error: unknown) => {
   process.stderr.write(`${renderError(error, true)}\n`);
   process.exitCode = 2;
 });
+
+function parseMinScore(value: string | undefined): number | 'invalid' | undefined {
+  if (value === undefined) return undefined;
+  const parsed = Number(value);
+  if (!Number.isInteger(parsed) || parsed < 0 || parsed > 100) {
+    process.stderr.write(`Invalid --min-score: ${value} (use an integer between 0 and 100).\n`);
+    process.exitCode = 2;
+    return 'invalid';
+  }
+  return parsed;
+}

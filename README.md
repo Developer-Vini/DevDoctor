@@ -260,7 +260,7 @@ dev-doctor
 - [x] Phase 1 — CLI, core, context, check system, terminal reporter
 - [x] Phase 2 — dependency checks, secret detection, code checks, score
 - [x] Phase 3 — safe fixes (`fix`), `--dry-run`, JSON and Markdown reports
-- [ ] Phase 4 — CI mode, configuration file support
+- [x] Phase 4 — CI mode, configuration file support
 - [ ] Phase 5 — AST analysis
 - [ ] Optional AI layer for explanations and suggestions
 

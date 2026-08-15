@@ -1,3 +1,4 @@
+import { loadConfig } from '../../core/config.js';
 import { buildContext } from '../../core/context.js';
 import { runAudit } from '../../core/runner.js';
 import { renderJsonReport } from '../../reporters/json.js';
@@ -20,8 +21,9 @@ export async function runReportCommand(
   const spinner = createSpinner(options.spinnerEnabled ?? false);
   spinner.start('Analyzing project...');
   try {
-    const context = await buildContext(projectPath);
-    const report = await runAudit(context);
+    const config = await loadConfig(projectPath);
+    const context = await buildContext(projectPath, config);
+    const report = await runAudit(context, { rules: config.rules });
     await spinner.stop();
 
     const output =

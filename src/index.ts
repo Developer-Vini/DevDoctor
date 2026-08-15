@@ -17,6 +17,7 @@ export type {
 } from './types/project.js';
 export type { AuditReport } from './types/report.js';
 export { buildContext } from './core/context.js';
+export { loadConfig } from './core/config.js';
 export { DevDoctorError, toErrorMessage } from './core/errors.js';
 export { parseGitignore } from './core/gitignore.js';
 export { computeScores } from './core/score.js';
