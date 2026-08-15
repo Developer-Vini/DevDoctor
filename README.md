@@ -139,24 +139,26 @@ dev-doctor fix                        # apply safe fixes
 Checks are independent modules registered in a central registry. The core
 never knows the internals of a check.
 
-| Check ID                       | Category      | What it detects                                       |
-| ------------------------------ | ------------- | ----------------------------------------------------- |
-| `project.detection`            | Project       | Unrecognized project type                             |
-| `project.package-manager`      | Project       | Missing/undetectable package manager                  |
-| `git.repository`               | Git           | Missing Git repo or Git executable                    |
-| `git.gitignore`                | Git           | Missing `.gitignore` or uncovered artifacts           |     | `security.env` | Security | `.env` files tracked by Git |
-| `security.secrets`             | Security      | Possible hardcoded secrets (always masked)            |
-| `dependencies.lockfile`        | Dependencies  | Missing lockfile                                      |
-| `dependencies.duplicates`      | Dependencies  | Same package in deps and devDeps                      |
-| `dependencies.unused`          | Dependencies  | Runtime deps never imported (best-effort)             |
-| `dependencies.vulnerabilities` | Security      | Known vulnerabilities (`npm audit` — network, opt-in) |
-| `documentation.readme`         | Documentation | Missing README or missing sections                    |
-| `configuration.package-json`   | Configuration | Invalid or incomplete `package.json`                  |
-| `code.console-log`             | Code Quality  | `console.log` / `debugger` leftovers                  |
-| `code.todo`                    | Code Quality  | `TODO` / `FIXME` markers                              |
-| `code.large-files`             | Code Quality  | Source files over 500 lines                           |
-| `code.empty-files`             | Code Quality  | Empty source files                                    |
-| `code.duplicate-files`         | Code Quality  | Files with identical content                          |
+| Check ID                       | Category      | What it detects                                        |
+| ------------------------------ | ------------- | ------------------------------------------------------ |
+| `project.detection`            | Project       | Unrecognized project type                              |
+| `project.package-manager`      | Project       | Missing/undetectable package manager                   |
+| `git.repository`               | Git           | Missing Git repo or Git executable                     |
+| `git.gitignore`                | Git           | Missing `.gitignore` or uncovered artifacts            |     | `security.env`     | Security     | `.env` files tracked by Git |
+| `security.secrets`             | Security      | Possible hardcoded secrets (always masked)             |
+| `dependencies.lockfile`        | Dependencies  | Missing lockfile                                       |
+| `dependencies.duplicates`      | Dependencies  | Same package in deps and devDeps                       |
+| `dependencies.unused`          | Dependencies  | Runtime deps never imported (best-effort)              |
+| `dependencies.vulnerabilities` | Security      | Known vulnerabilities (`npm audit` — network, opt-in)  |
+| `documentation.readme`         | Documentation | Missing README or missing sections                     |
+| `configuration.package-json`   | Configuration | Invalid or incomplete `package.json`                   |
+| `code.console-log`             | Code Quality  | `console.log` / `debugger` leftovers                   |
+| `code.todo`                    | Code Quality  | `TODO` / `FIXME` markers                               |     | `code.large-files` | Code Quality | Source files over 500 lines |
+| `code.empty-files`             | Code Quality  | Empty source files                                     |
+| `code.duplicate-files`         | Code Quality  | Files with identical content                           |
+| `code.large-functions`         | Code Quality  | Functions with large bodies (AST)                      |
+| `code.unreachable`             | Code Quality  | Statements after `return`/`throw` (AST)                |
+| `code.suspicious-imports`      | Code Quality  | `eval()` / `new Function()` / dynamic `import()` (AST) |
 
 > Checks marked _(network, opt-in)_ only run when you ask for them
 > (`dev-doctor audit --security`). Everything else works 100% offline.
@@ -227,6 +229,10 @@ The core exposes a small API (`buildContext`, `runAudit`, `registerCheck`) so
 plugins like `@devdoctor/check-react` or `@devdoctor/check-python` can be added
 later without touching the core.
 
+AST analysis uses the official TypeScript compiler (`typescript`), which also
+parses plain JavaScript, so function-size, unreachable-code and dynamic-code
+checks work on both `.js` and `.ts` projects.
+
 ## Development
 
 ```bash
@@ -261,7 +267,7 @@ dev-doctor
 - [x] Phase 2 — dependency checks, secret detection, code checks, score
 - [x] Phase 3 — safe fixes (`fix`), `--dry-run`, JSON and Markdown reports
 - [x] Phase 4 — CI mode, configuration file support
-- [ ] Phase 5 — AST analysis
+- [x] Phase 5 — AST analysis (large functions, unreachable code, suspicious dynamic code)
 - [ ] Optional AI layer for explanations and suggestions
 
 ## Contributing

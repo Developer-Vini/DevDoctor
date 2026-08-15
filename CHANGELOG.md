@@ -5,6 +5,20 @@ All notable changes to DevDoctor are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/), and
 this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [0.5.0] - 2026-08-15
+
+### Added
+
+- Phase 5: AST analysis using the official TypeScript compiler (parses both
+  `.js` and `.ts`).
+- `code.large-functions`: functions with large bodies (> 50 statements or
+  > 100 lines).
+- `code.unreachable`: statements after `return`/`throw` that never run.
+- `code.suspicious-imports`: `eval()`, `new Function()` and dynamic
+  `import()` with a non-literal argument.
+- `typescript` is now a runtime dependency (used for parsing).
+- Version bumped to 0.5.0.
+
 ## [0.4.0] - 2026-08-15
 
 ### Added

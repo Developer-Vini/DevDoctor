@@ -1,6 +1,6 @@
 {
   "name": "devdoctor",
-  "version": "0.4.0",
+  "version": "0.5.0",
   "description": "Run one command. Know the health of your project.",
   "type": "module",
   "license": "MIT",
@@ -44,7 +44,8 @@
   "dependencies": {
     "chalk": "^5.4.1",
     "commander": "^12.1.0",
-    "ora": "^8.1.0"
+    "ora": "^8.1.0",
+    "typescript": "^5.7.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
@@ -52,7 +53,6 @@
     "eslint": "^9.17.0",
     "eslint-config-prettier": "^10.0.1",
     "prettier": "^3.4.2",
-    "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.0",
     "vitest": "^3.0.0"
   }

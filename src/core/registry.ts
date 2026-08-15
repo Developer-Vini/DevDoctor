@@ -4,7 +4,10 @@ import { codeConsoleLogCheck } from '../checks/code/consoleLog.js';
 import { codeDuplicateFilesCheck } from '../checks/code/duplicateFiles.js';
 import { codeEmptyFilesCheck } from '../checks/code/emptyFiles.js';
 import { codeLargeFilesCheck } from '../checks/code/largeFiles.js';
+import { codeLargeFunctionsCheck } from '../checks/code/largeFunctions.js';
+import { codeSuspiciousImportsCheck } from '../checks/code/suspiciousImports.js';
 import { codeTodoCheck } from '../checks/code/todo.js';
+import { codeUnreachableCheck } from '../checks/code/unreachable.js';
 import { dependencyDuplicatesCheck } from '../checks/dependencies/duplicates.js';
 import { dependencyLockfileCheck } from '../checks/dependencies/lockfile.js';
 import { dependencyUnusedCheck } from '../checks/dependencies/unused.js';
@@ -56,6 +59,9 @@ export function registerDefaultChecks(): void {
   registerCheck(codeLargeFilesCheck);
   registerCheck(codeEmptyFilesCheck);
   registerCheck(codeDuplicateFilesCheck);
+  registerCheck(codeLargeFunctionsCheck);
+  registerCheck(codeUnreachableCheck);
+  registerCheck(codeSuspiciousImportsCheck);
 }
 
 /** Test helper: clears the registry so tests can register their own checks. */
