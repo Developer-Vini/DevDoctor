@@ -268,7 +268,6 @@ dev-doctor
 - [x] Phase 3 — safe fixes (`fix`), `--dry-run`, JSON and Markdown reports
 - [x] Phase 4 — CI mode, configuration file support
 - [x] Phase 5 — AST analysis (large functions, unreachable code, suspicious dynamic code)
-- [ ] Optional AI layer for explanations and suggestions
 
 ## Contributing
 
