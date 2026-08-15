@@ -126,26 +126,26 @@ Run:
 Checks are independent modules registered in a central registry. The core
 never knows the internals of a check.
 
-| Check ID                       | Category      | What it detects                             |
-| ------------------------------ | ------------- | ------------------------------------------- |
-| `project.detection`            | Project       | Unrecognized project type                   |
-| `project.package-manager`      | Project       | Missing/undetectable package manager        |
-| `git.repository`               | Git           | Missing Git repo or Git executable          |
-| `git.gitignore`                | Git           | Missing `.gitignore` or uncovered artifacts || `security.env` | Security | `.env` files tracked by Git |
-| `security.secrets` | Security | Possible hardcoded secrets (always masked) |
-| `dependencies.lockfile` | Dependencies | Missing lockfile |
-| `dependencies.duplicates` | Dependencies | Same package in deps and devDeps |
-| `dependencies.unused` | Dependencies | Runtime deps never imported (best-effort) |
-| `dependencies.vulnerabilities` | Security | Known vulnerabilities (`npm audit` — network, opt-in) |
-| `documentation.readme` | Documentation | Missing README or missing sections |
-| `configuration.package-json` | Configuration | Invalid or incomplete `package.json` |
-| `code.console-log` | Code Quality | `console.log` / `debugger` leftovers |
-| `code.todo` | Code Quality | `TODO` / `FIXME` markers |
-| `code.large-files` | Code Quality | Source files over 500 lines |
-| `code.empty-files` | Code Quality | Empty source files |
-| `code.duplicate-files` | Code Quality | Files with identical content |
+| Check ID                       | Category      | What it detects                                       |
+| ------------------------------ | ------------- | ----------------------------------------------------- |
+| `project.detection`            | Project       | Unrecognized project type                             |
+| `project.package-manager`      | Project       | Missing/undetectable package manager                  |
+| `git.repository`               | Git           | Missing Git repo or Git executable                    |
+| `git.gitignore`                | Git           | Missing `.gitignore` or uncovered artifacts           |     | `security.env` | Security | `.env` files tracked by Git |
+| `security.secrets`             | Security      | Possible hardcoded secrets (always masked)            |
+| `dependencies.lockfile`        | Dependencies  | Missing lockfile                                      |
+| `dependencies.duplicates`      | Dependencies  | Same package in deps and devDeps                      |
+| `dependencies.unused`          | Dependencies  | Runtime deps never imported (best-effort)             |
+| `dependencies.vulnerabilities` | Security      | Known vulnerabilities (`npm audit` — network, opt-in) |
+| `documentation.readme`         | Documentation | Missing README or missing sections                    |
+| `configuration.package-json`   | Configuration | Invalid or incomplete `package.json`                  |
+| `code.console-log`             | Code Quality  | `console.log` / `debugger` leftovers                  |
+| `code.todo`                    | Code Quality  | `TODO` / `FIXME` markers                              |
+| `code.large-files`             | Code Quality  | Source files over 500 lines                           |
+| `code.empty-files`             | Code Quality  | Empty source files                                    |
+| `code.duplicate-files`         | Code Quality  | Files with identical content                          |
 
-> Checks marked *(network, opt-in)* only run when you ask for them
+> Checks marked _(network, opt-in)_ only run when you ask for them
 > (`dev-doctor audit --security`). Everything else works 100% offline.
 
 ## Score
