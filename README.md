@@ -32,13 +32,13 @@ required.
 ## Installation
 
 ```bash
-npm install -g devdoctor
+npm install -g devdoctr
 ```
 
 or run it on the spot with:
 
 ```bash
-npx devdoctor
+npx devdoctr
 ```
 
 ## Usage
